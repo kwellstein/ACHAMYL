@@ -6,8 +6,8 @@ paths.env.workingDir = pwd;
 paths.env.toolboxDir = ['..',filesep,'..',filesep,'Toolboxes',filesep]; % Path to you toolbox
 paths.env.modelDir   = [paths.env.toolboxDir,'tapas-6.0.1',filesep];
 paths.env.spmDir     = [paths.env.toolboxDir,'spm',filesep];
-paths.env.data       = [pwd,filesep,'data',filesep]; % path to your datafiles
-paths.env.resultsDir = [pwd,filesep,'data',filesep];
+ paths.env.data      = ['..',filesep,'data',filesep]; % path to your datafiles
+paths.env.resultsDir = ['..',filesep,'data',filesep]; 
 
 %% SPECIFY MODELS and related functions
 options.setupModels       = [];
