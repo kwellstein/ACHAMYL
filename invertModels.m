@@ -1,6 +1,6 @@
 function invertModels
 
-%% SPECIFY paths and analysis options
+%% SPECIFY paths and analysis options,
 
 paths.env.workingDir = pwd;
 paths.env.toolboxDir = ['..',filesep,'..',filesep,'Toolboxes',filesep]; % Path to you toolbox
@@ -81,7 +81,7 @@ for m = 1:numel(options.model.space)
             print([figName,'.png'], '-dpng');
             close all
             %Save model fit
-            save([options.participant(n).dir,filesep,options.model.space{m},filesep,'est.mat'],'-struct','est');
+            save([options.participant(n).dir,filesep,options.model.space{m},'est.mat'],'-struct','est');
             clear behav;
         else
             disp('datafile was empty....')
