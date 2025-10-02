@@ -146,8 +146,8 @@ c.logkasa = [     0,      0];
 % Omegas
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
-c.ommu = [NaN,  -3,   2];
-c.omsa = [NaN,   4,   0];
+c.ommu = [NaN,  -3,   -6];
+c.omsa = [NaN,   4^2,   0];
 
 % Gather prior settings in vectors
 c.priormus = [
