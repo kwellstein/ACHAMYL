@@ -2,6 +2,8 @@
 using HierarchicalGaussianFiltering
 using ActionModels
 using StatsPlots
+using Glob, CSV, DataFrames #For loading the data
+using JLD2 #For saving the results
 
 action_model = ActionModel(HGFSoftmax(; HGF = "binary_3level"))
 agent = init_agent(action_model, save_history = :xbin_prediction_mean)
