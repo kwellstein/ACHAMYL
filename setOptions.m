@@ -10,11 +10,11 @@ paths.env.resultsDir = ['..',filesep,'data',filesep];
 
 %% SPECIFY MODELS and related functions
 options.setupModels       = [];
-options.model.space       = {'HGF_3L','eHGF_3L','eHGF_2L','RW'}; % the first one is the original HGF as it is used in Sandra's paper, the others are the enhanced HGFs,and then a RW
-options.model.prc         = {'tapas_hgf_binary','tapas_ehgf_binary','tapas_ehgf_binary','tapas_rw_binary'};
-options.model.prc_config  = {'tapas_hgf_binary_config_3L','tapas_ehgf_binary_config_3L','tapas_ehgf_binary_config_2L','tapas_rw_binary_config'};
-options.model.obs	      = {'tapas_unitsq_sgm','tapas_unitsq_sgm','tapas_unitsq_sgm','tapas_unitsq_sgm'};
-options.model.obs_config  = {'tapas_unitsq_sgm_config','tapas_unitsq_sgm_config','tapas_unitsq_sgm_config','tapas_unitsq_sgm_config'};
+options.model.space       = {'HGF_3L','eHGF_3L'}; % the first one is the original HGF as it is used in Sandra's paper, the others are the enhanced HGFs,and then a RW
+options.model.prc         = {'tapas_hgf_binary','tapas_ehgf_binary'};
+options.model.prc_config  = {'tapas_hgf_binary_config_3L','tapas_ehgf_binary_config_3L'};
+options.model.obs	      = {'tapas_unitsq_sgm','tapas_unitsq_sgm'};
+options.model.obs_config  = {'tapas_unitsq_sgm_config','tapas_unitsq_sgm_config'};
 options.model.opt_config  = {'tapas_quasinewton_optim_config'};
 options.model.inputs = readmatrix([paths.env.workingDir,filesep,'inputs.csv']);
 options.plot(1).plot_fits = @tapas_ehgf_plotTraj_mod;
@@ -40,7 +40,7 @@ options.dataSet.nParticipants = size(d,1);
 for i = 1:options.dataSet.nParticipants
     options.participant(i).dir = [paths.env.data,d(i).name];
     digits = regexp(d(i).name, '[0-9]'); % this is where my IDs appear, your may be different
-    PID = str2double(d(i).name(digits)); % get PIDs from datafiles found in folder
+    PID    = str2double(d(i).name(digits)); % get PIDs from datafiles found in folder
     options.dataSet.PIDs(i)  = PID;
     options.participant(i).dataFile = [options.participant(i).dir,filesep,'behav.mat'];
 

@@ -140,14 +140,14 @@ c.rhosa = [NaN, 0, 0];
 % Higher log(kappas) should be fixed (preferably to log(1)) if the
 % observation model does not use mu_i+1 (kappa then determines the
 % scaling of x_i+1).
-c.logkamu = [log(1), log(1)];
-c.logkasa = [     0,      3];
+c.logkamu = [log(1), -6];
+c.logkasa = [     0,   0];
 
 % Omegas
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
 c.ommu = [NaN,  -3,   -6];
-c.omsa = [NaN,   0,   4^3];
+c.omsa = [NaN,   6,   4^2];
 
 % Gather prior settings in vectors
 c.priormus = [

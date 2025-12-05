@@ -5,12 +5,12 @@ function plotPEs
 paths.env.workingDir = pwd;
 paths.env.data       = ['..',filesep,'data',filesep]; % path to your datafiles
 paths.env.resultsDir = ['..',filesep,'data',filesep];
-options.model.space  = {'HGF_3L','eHGF_3L','eHGF_2L'}; % the first one is the original HGF as it is used in Sandra's paper, the others are the enhanced HGFs,and then a RW
+options.model.space  = {'HGF_3L','eHGF_3L'}; % the first one is the original HGF as it is used in Sandra's paper, the others are the enhanced HGFs,and then a RW
 
 dm = dir([paths.env.data,filesep,'run*']);
 options.model.nPriorSettings = 3;%size(dm,1);
 
-for r = 3:options.model.nPriorSettings
+for r = 1:options.model.nPriorSettings
     options.modelRun(r).dir = [paths.env.data,dm(r).name];
     digits = regexp(dm(r).name, '[0-9]'); % this is where my IDs appear, your may be different
     runNo = str2double(dm(r).name(digits)); % get PIDs from datafiles found in folder
