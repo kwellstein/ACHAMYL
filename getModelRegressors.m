@@ -23,7 +23,17 @@ for n = 1:options.dataSet.nParticipants
         {'chPE','PE_L2','PE_L3','pwPE_L2','pwPE_L3','estBeliefs_L1','estBeliefs_L2','estBeliefs_L3'});
     writetable(modelRegressors,[options.participant(n).dir,filesep,'sub',num2str(currPID),'_modelRegressors.csv']);
     save([options.participant(n).dir,filesep,'sub',num2str(currPID),'_modelRegressors.mat'],'modelRegressors');
+
+est(n).chPE = chPE;
+est(n).PE_L2 = PE_L2;
+est(n).PE_L3 = PE_L3;
+est(n).pwPE_L2 = pwPE_L2;
+est(n).pwPE_L3 = pwPE_L3;
+est(n).estBeliefs_L1 = estBeliefs_L1;
+est(n).estBeliefs_L2 = estBeliefs_L2;
+est(n).estBeliefs_L3 = estBeliefs_L3;
+
 end
 
-
+save([paths.env.resultsDir,'trialByTrialQuantities.mat'],'est');
 end
