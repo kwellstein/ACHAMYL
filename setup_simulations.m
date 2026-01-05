@@ -1,4 +1,4 @@
-function setup_simulations
+function setup_simulations(r)
 
 %% setup_simulations
 %  Simulat synthetic agents using priors determined from pilot dataset
@@ -72,7 +72,8 @@ for iAgent = 1:10
 
 
         while stable == 0
-            % try %sim = tapas_simModel(inputs, prc_model, prc_pvec, obs_model, obs_pvec)
+
+          try %sim = tapas_simModel(inputs, prc_model, prc_pvec, obs_model, obs_pvec)
                 data = tapas_simModel(options.model.inputs,...
                     options.modelSpace(iModel).prc,...
                     input.prc.nativeInp,...
@@ -81,24 +82,24 @@ for iAgent = 1:10
                     options.rng.settings.State(options.rng.idx));
                 stable = 1;
 
-            % catch
-            %     fprintf('simulation failed for Model %1.0f, synth. Sub %1.0f \n', [iModel, iAgent]);
-            %     fprintf('Prc Param Values: \n');
-            %     input.prc.nativeInp
-            %     fprintf('Obs Param Values: \n');
-            %     input.obs.nativeInp
-            %     % re-sample prc param values
-            %     for j = 1:size(options.modelSpace(iModel).prc_idx,2)
-            %         input.prc.transInp(options.modelSpace(iModel).prc_idx(j)) = ...
-            %             normrnd(options.modelSpace(iModel).prc_config.priormus(options.modelSpace(iModel).prc_idx(j)),...
-            %             abs(sqrt(options.modelSpace(iModel).prc_config.priorsas(options.modelSpace(iModel).prc_idx(j)))));
-            %     end
-            %     input.prc.nativeInp = options.modelSpace(iModel).prc_config.transp_prc_fun(c, input.prc.transInp);
-            %     stable = 0;
-            % end
+            catch
+                fprintf('simulation failed for Model %1.0f, synth. Sub %1.0f \n', [iModel, iAgent]);
+                fprintf('Prc Param Values: \n');
+                input.prc.nativeInp
+                fprintf('Obs Param Values: \n');
+                input.obs.nativeInp
+                % re-sample prc param values
+                for j = 1:size(options.modelSpace(iModel).prc_idx,2)
+                    input.prc.transInp(options.modelSpace(iModel).prc_idx(j)) = ...
+                        normrnd(options.modelSpace(iModel).prc_config.priormus(options.modelSpace(iModel).prc_idx(j)),...
+                        abs(sqrt(options.modelSpace(iModel).prc_config.priorsas(options.modelSpace(iModel).prc_idx(j)))));
+                end
+                input.prc.nativeInp = options.modelSpace(iModel).prc_config.transp_prc_fun(c, input.prc.transInp);
+                stable = 0;
+            end
             % save simulation input
             sim.agent(iAgent,iModel).data  = data;
-            sim.agent(iAgent,iModel).input = input;
+            sim.input(iAgent,iModel).input = input;
 
             % Update the rng state idx
             options.rng.idx     = options.rng.idx+1;
@@ -111,7 +112,7 @@ for iAgent = 1:10
 end % END AGENTS loop
 
 %% SAVE model simulation specs as struct
-save([paths.env.data,filesep,'sim.mat'], '-struct', 'sim');
+save([char(paths.env(r).simulationsDir),'sim.mat'], '-struct', 'sim');
 
 %% PLOT predictions
 for iModel = 1:nModels
@@ -142,7 +143,7 @@ for iModel = 1:nModels
     xticks(0:40:numel(options.model.inputs))
     hold on;
 
-    figdir = fullfile([char(paths.env.resultsDir),'sim',filesep,'predictions_',options.model.space{iModel}]);
+    figdir = fullfile([char(paths.env(1).simulationsDir),'predictions_',options.model.space{iModel}]);
     save([figdir,'.fig'])
     print(figdir, '-dpng');
     close;

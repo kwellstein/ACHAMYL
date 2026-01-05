@@ -1,15 +1,14 @@
-function invertModels
+function invertModels(r)
 
 [~,options] = setOptions;
 options = setup_configFiles(options);
 
 %% INVERT MODELS
-
 for m = 1:numel(options.model.space)
     for n = 1:options.dataSet.nParticipants
         currPID  = options.dataSet.PIDs(n);
         disp(['fitting ', num2str(currPID), ' (',num2str(n),' of ',num2str(options.dataSet.nParticipants),')']);
-        behav = load(options.participant(n).dataFile);
+        behav = load(options.participant(n,1).dataFile);
 
         if ~isempty(behav)
             strct              = eval('tapas_quasinewton_optim_config');
@@ -26,12 +25,12 @@ for m = 1:numel(options.model.space)
 
             % Plot standard trajectory plot
             options.plot(m).plot_fits(est);
-            figName = fullfile([options.participant(n).dir,filesep,'modelInv_',options.model.space{m}]);
+            figName = fullfile([options.participant(n,r).resultsdir,filesep,'modelInv_',options.model.space{m}]);
             savefig(figName);
             % print([figName,'.png'], '-dpng');
             close all
             %Save model fit
-            save([options.participant(n).dir,filesep,options.model.space{m},'est.mat'],'-struct','est');
+            save([options.participant(n,r).resultsdir,filesep,options.model.space{m},'est.mat'],'-struct','est');
             clear behav;
         else
             disp('datafile was empty....')

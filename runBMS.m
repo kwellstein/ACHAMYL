@@ -56,23 +56,35 @@ options = setup_configFiles(options);
 
 % prespecify variables needed for running this function
 nModels  = numel(options.model.space);
-
 % model settings
-addpath(genpath(paths.env.spmDir));
+addpath(genpath(paths.env(1).spmDir));
 
-%% LOAD mice
-for n = 1:options.dataSet.nParticipants
-    currPID = options.dataSet.PIDs(n);
-    for m = 1:nModels
-        % load results from real data model inversion
-        est = load([options.participant(1).dir,filesep,options.model.space{m},'est.mat']);
-
-        res.LME(n,m)   = est.optim.LME;
-        res.prc_param(n,m).ptrans = est.p_prc.ptrans(options.modelSpace(m).prc_idx);
-        res.obs_param(n,m).ptrans = est.p_obs.ptrans(options.modelSpace(m).obs_idx);
+%% LOAD participants
+for r = 1:options.model.nRuns
+    for n = 1:options.dataSet.nParticipants
+        currPID = options.dataSet.PIDs(n);
+        for m = 1:nModels
+            % load results from real data model inversion
+            est = load([options.participant(n,r).resultsdir,filesep,options.model.space{m},'est.mat']);
+            if options.model.nRuns>1
+                if r==1 
+                res.LME(n,m)   = est.optim.LME;
+                res.prc_param(n,m).ptrans = est.p_prc.ptrans(options.modelSpace(m).prc_idx);
+                res.obs_param(n,m).ptrans = est.p_obs.ptrans(options.modelSpace(m).obs_idx);
+                else
+                m2 = nModels+m*r;
+                res.LME(n,m2)   = est.optim.LME;
+                res.prc_param(n,m2).ptrans = est.p_prc.ptrans(options.modelSpace(m).prc_idx);
+                res.obs_param(n,m2).ptrans = est.p_obs.ptrans(options.modelSpace(m).obs_idx);
+                end
+            else
+                res.LME(n,m)   = est.optim.LME;
+                res.prc_param(n,m).ptrans = est.p_prc.ptrans(options.modelSpace(m).prc_idx);
+                res.obs_param(n,m).ptrans = est.p_obs.ptrans(options.modelSpace(m).obs_idx);
+            end
+        end
     end
 end
-
 
 %% PERFORM rfx BMS
 [res.BMS.alpha,res.BMS.exp_r,res.BMS.xp,res.BMS.pxp,res.BMS.bor] = spm_BMS(res.LME);
@@ -183,7 +195,7 @@ end
     normalised_lme = res.LME - max(res.LME, [], 2);
 
     % Create  heatmap
-    h = heatmap(optionsFile.model.names, subject_labels, normalised_lme);
+    h = heatmap(options.model.names, subject_labels, normalised_lme);
     h.Title = 'Subject-Level Model Comparison';
     h.XLabel = 'Model';
     h.YLabel = 'Subject ID';

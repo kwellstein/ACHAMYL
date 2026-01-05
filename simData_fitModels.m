@@ -1,4 +1,4 @@
-function simData_fitModels
+function simData_fitModels(r)
 
 %% simData_fitModels
 %  Invert simulated agents with models in the modelspace. This step will be
@@ -40,7 +40,7 @@ disp('*');
 % load or run options for running this function
 [paths,options] = setOptions;
 options = setup_configFiles(options);
-
+ 
 % prespecify variables needed for running this function
 nModels  = numel(options.model.space);
 nSamples = 10;
@@ -52,17 +52,14 @@ strct.nRandInit    = options.rng.nRandInit;
 strct.seedRandInit = options.rng.settings.State(options.rng.idx, 1);
 
 
-sim = load([paths.env.resultsDir,'sim',filesep,'sim.mat']);      
+sim = load([char(paths.env(r).simulationsDir),'sim.mat']);      
 %%  MODEL INVERSION
 % looping across tasks, samples, models that created the simulated behaviour (gen model | m_in) 
 % and models that will be fitted to the simulated behaviour (estimating model | m_est)
     for iSample = 1:nSamples 
         for m_in = 1:nModels
             for m_est = 1:nModels
-                if strcmp(options.model.space{m_est},'RW') && strcmp(options.model.space{m_in},'RW')
-                    strct.maxStep  = 1000; % special setting for the RW model due to issue with opt algorithm
-                end
-
+              
                 disp(['Model inversion for agent: ', num2str(iSample), ' | gen model ', options.modelSpace(m_in).name, ' | estimating with model: ', options.modelSpace(m_est).name]);
                 est = tapas_fitModel(sim.agent(iSample,m_in).data.y,... % responses
                     options.model.inputs,...         % input sequence
@@ -72,14 +69,14 @@ sim = load([paths.env.resultsDir,'sim',filesep,'sim.mat']);
 
                     % Plot standard trajectory plot
                     options.plot(m_est).plot_fits(est);
-                    figdir = fullfile([paths.env.resultsDir,'sim',filesep,'simAgent_', num2str(iSample),'_model_in_',options.model.space{m_in},...
+                    figdir = fullfile([char(paths.env(r).simulationsDir),'simAgent_', num2str(iSample),'_model_in_',options.model.space{m_in},...
                         '_model_est_',options.model.space{m_est}]);
                     save([figdir,'.fig']);
                     print([figdir,'.png'], '-dpng');
                     close all;
 
                 %% SAVE model fit
-                savePath = fullfile([char(paths.env.resultsDir),'sim',filesep,...
+                savePath = fullfile([char(paths.env(r).simulationsDir),...
                     'simAgent_', num2str(iSample),'_model_in_',options.model.space{m_in},...
                         '_model_est_',options.model.space{m_est},'.mat']);
                 save(savePath, '-struct', 'est');
