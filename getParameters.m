@@ -1,4 +1,4 @@
-function getParameters(selectedModel)
+function getParameters(selectedModel,r)
 
 [paths,options] = setOptions();
 options         = getGroups(options);
@@ -12,7 +12,7 @@ bopars = tapas_fitModel([],...
 m = find(strcmp(options.model.space,selectedModel));
 for n = 1:options.dataSet.nParticipants
     currPID  = options.dataSet.PIDs(n);
-    load([options.participant(n).resulltsdir,filesep,options.model.space{m},'est.mat']);
+    load([options.participant(n,r).resultsdir,filesep,options.model.space{m},'est.mat']);
     zeta(n,:)= p_obs.ze;
     om2(n,:) = p_prc.om(2);
     ka2(n,:) = p_prc.ka(2);
@@ -27,6 +27,6 @@ end
     data = [string(options.dataSet.PIDs)' options.dataSet.groupID' zeta om2 ka2 om3 dabsbo_om2 dabsbo_ka2 dabsbo_om3 dbo_om2 dbo_ka2 dbo_om3];
     modelParameters = array2table(data,'VariableNames',{'ID','group','zeta','om2','ka2','om3', 'dabsbo_om2','dabsbo_ka2', 'dabsbo_om3', 'dbo_om2','dbo_ka2', 'dbo_om3'});
     writetable(modelParameters,[paths.env.resultsDir,'modelParameters.csv']);
-    save([paths.env.resultsDir,'modelRegressors.mat'],'modelParameters');
+    save([paths.env(1).resultsDir,selectedModel,'_run',num2str(r),'_modelParameters.mat'],'modelParameters');
 
 end
