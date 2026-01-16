@@ -1,5 +1,7 @@
 function getModelRegressors(selectedModel,r)
 
+
+
 [paths,options] = setOptions();
 
 m = find(strcmp(options.model.space,selectedModel));
@@ -13,11 +15,13 @@ for n = 1:options.dataSet.nParticipants
 
     % choice PE
     iConsist = find(u==1);
+    iInconsist = find(u==0);
     iCorrPred = find(y==1);
     iIncorrPred = find(y==0);
     iConsistCorrPred = intersect(iCorrPred,iConsist);
-    iInconsist = find(u==0);
+    iConsistIncorrPred = intersect(iIncorrPred,iConsist);
     iInconsistCorrPred = intersect(iCorrPred,iInconsist);
+    iInconsistIncorrPred = intersect(iIncorrPred,iInconsist);
     iFace = find(options.model.outcome==1);
     iHouse = find(options.model.outcome==0);
     iHigh = find(options.model.sound==1);
@@ -27,10 +31,11 @@ for n = 1:options.dataSet.nParticipants
         iNaN =find(isnan(y));
     end
 
-    choicePE(iConsistCorrPred)   =  1-traj.muhat(iConsistCorrPred,1);
-    choicePE(iInconsistCorrPred) =  traj.muhat(iInconsistCorrPred,1);
-    choicePE(iIncorrPred)        =  -1*traj.muhat(iIncorrPred,1);
-    choicePE(iNaN)               =  -1*traj.muhat(iNaN,1);
+    choicePE(iConsistCorrPred)     = 1-traj.muhat(iConsistCorrPred,1);
+    choicePE(iInconsistCorrPred)   = traj.muhat(iInconsistCorrPred,1);
+    choicePE(iConsistIncorrPred)   = -1*(1-traj.muhat(iConsistIncorrPred,1));
+    choicePE(iInconsistIncorrPred) = -1*traj.muhat(iInconsistIncorrPred,1);
+    choicePE(iNaN)                 = -1*traj.muhat(iNaN,1);
     if size(choicePE,1)==1
         choicePE = choicePE';
     end
@@ -40,38 +45,6 @@ for n = 1:options.dataSet.nParticipants
     outcomePE(iInconsist) = traj.muhat(iInconsist,1);
     if size(outcomePE,1)==1
         outcomePE = outcomePE';
-    end
-
-    outcomeFacePE(iHigh) = 1-traj.muhat(iHigh,1);
-    outcomeFacePE(iLow)  = traj.muhat(iLow,1);
-    if size(outcomeFacePE,1)==1
-        outcomeFacePE = outcomeFacePE';
-    end
-
-    outcomeHousePE(iLow)  = 1-traj.muhat(iLow,1);
-    outcomeHousePE(iHigh) = traj.muhat(iHigh,1);
-    if size(outcomeHousePE,1)==1
-        outcomeHousePE = outcomeHousePE';
-    end
-
-
-    % predicions
-    predictions(iConsist)   = traj.muhat(iConsist,1);
-    predictions(iInconsist) = 1-traj.muhat(iInconsist,1);
-    if size(outcomePE,1)==1
-        predictions = predictions';
-    end
-
-    facePredictions(iHigh) = traj.muhat(iHigh,1);
-    facePredictions(iLow)  = 1-traj.muhat(iLow,1);
-    if size(facePredictions,1)==1
-        facePredictions = facePredictions';
-    end
-
-    housePredictions(iLow) = traj.muhat(iLow,1);
-    housePredictions(iHigh)  = 1-traj.muhat(iHigh,1);
-    if size(housePredictions,1)==1
-        housePredictions = housePredictions';
     end
 
     % PEs on second and third level
@@ -102,7 +75,17 @@ for n = 1:options.dataSet.nParticipants
     est(n).estBeliefs_L2 = estBeliefs_L2;
     est(n).estBeliefs_L3 = estBeliefs_L3;
 
-end
+    plot([1:320],abs(traj.muhat(:,1)));
 
-save([paths.env.resultsDir,'trialByTrialQuantities.mat'],'est');
+    hold on
+end
+PIDs = string(options.dataSet.PIDs);
+legend(PIDs);
+
+save([paths.env(1).resultsDir,selectedModel,'_run',num2str(r),'_trialByTrialQuantities.mat'],'est');
+figName = fullfile([paths.env(1).resultsDir,filesep,'posteriors_',selectedModel,'_run',num2str(r)]);
+
+savefig(figName);
+print([figName,'.png'], '-dpng')
+close all
 end
